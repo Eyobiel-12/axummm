@@ -25,6 +25,21 @@ const times = [
   '9:00 PM',
 ]
 
+const BLOCKED_RESERVATION_DATES = ['2026-09-12']
+
+const formatBlockedDate = (dateString: string) => {
+  const date = new Date(`${dateString}T00:00:00`)
+
+  return new Intl.DateTimeFormat('en-GB', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }).format(date)
+}
+
+const isBlockedDate = (dateString: string) =>
+  BLOCKED_RESERVATION_DATES.includes(dateString)
+
 const fieldClass =
   'w-full rounded-none border border-input bg-background px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary'
 
@@ -51,6 +66,14 @@ export function ReservationForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+
+    if (isBlockedDate(form.date)) {
+      setError(
+        `Reservations are unavailable on ${formatBlockedDate(form.date)}. Please choose another date.`,
+      )
+      return
+    }
+
     setLoading(true)
 
     const templateParams = {
@@ -208,7 +231,20 @@ export function ReservationForm() {
             suppressHydrationWarning
             min={today}
             value={form.date}
-            onChange={(e) => update('date', e.target.value)}
+            onChange={(e) => {
+              const selectedDate = e.target.value
+
+              if (isBlockedDate(selectedDate)) {
+                setError(
+                  `Reservations are unavailable on ${formatBlockedDate(selectedDate)}. Please choose another date.`,
+                )
+                update('date', '')
+                return
+              }
+
+              setError(null)
+              update('date', selectedDate)
+            }}
             className={cn(fieldClass, '[color-scheme:dark]')}
           />
         </div>
