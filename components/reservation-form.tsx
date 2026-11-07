@@ -5,13 +5,11 @@ import { Check, Loader2, AlertCircle } from 'lucide-react'
 import emailjs from '@emailjs/browser'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { isClosedOn } from '@/lib/hours'
 
-const EMAILJS_SERVICE_ID =
-  process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || 'service_gwcoxf9'
-const EMAILJS_TEMPLATE_ID =
-  process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || 'template_j9vol1j'
-const EMAILJS_PUBLIC_KEY =
-  process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || 'wlCiKA-waB_6is8oZ'
+const EMAILJS_SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID ?? ''
+const EMAILJS_TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID ?? ''
+const EMAILJS_PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY ?? ''
 
 const times = [
   '5:00 PM',
@@ -25,7 +23,8 @@ const times = [
   '9:00 PM',
 ]
 
-const BLOCKED_RESERVATION_DATES = ['2026-09-12']
+// Add fully booked dates here as 'YYYY-MM-DD'.
+const BLOCKED_RESERVATION_DATES: string[] = []
 
 const formatBlockedDate = (dateString: string) => {
   const date = new Date(`${dateString}T00:00:00`)
@@ -39,6 +38,14 @@ const formatBlockedDate = (dateString: string) => {
 
 const isBlockedDate = (dateString: string) =>
   BLOCKED_RESERVATION_DATES.includes(dateString)
+
+const dateError = (dateString: string) => {
+  if (isClosedOn(dateString))
+    return 'We are closed on Mondays. Please choose another date.'
+  if (isBlockedDate(dateString))
+    return `Reservations are unavailable on ${formatBlockedDate(dateString)}. Please choose another date.`
+  return null
+}
 
 const fieldClass =
   'w-full rounded-none border border-input bg-background px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary'
@@ -67,10 +74,9 @@ export function ReservationForm() {
     e.preventDefault()
     setError(null)
 
-    if (isBlockedDate(form.date)) {
-      setError(
-        `Reservations are unavailable on ${formatBlockedDate(form.date)}. Please choose another date.`,
-      )
+    const invalidDate = dateError(form.date)
+    if (invalidDate) {
+      setError(invalidDate)
       return
     }
 
@@ -234,10 +240,9 @@ export function ReservationForm() {
             onChange={(e) => {
               const selectedDate = e.target.value
 
-              if (isBlockedDate(selectedDate)) {
-                setError(
-                  `Reservations are unavailable on ${formatBlockedDate(selectedDate)}. Please choose another date.`,
-                )
+              const invalidDate = dateError(selectedDate)
+              if (invalidDate) {
+                setError(invalidDate)
                 update('date', '')
                 return
               }
