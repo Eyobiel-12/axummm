@@ -4,6 +4,7 @@ import { Cormorant_Garamond, Manrope } from 'next/font/google'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import './globals.css'
+import { openingHoursSchema } from '@/lib/hours'
 
 const cormorant = Cormorant_Garamond({
   subsets: ['latin'],
@@ -66,7 +67,7 @@ export default function RootLayout({
                 addressLocality: 'Amsterdam',
                 addressCountry: 'NL',
               },
-              openingHours: 'Thursday 17:00-23:30',
+              openingHoursSpecification: openingHoursSchema,
             }),
           }}
         />

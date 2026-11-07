@@ -30,9 +30,9 @@ pnpm install
 ### 2. Environment Variables
 Create a `.env.local` file in the root directory:
 ```env
-NEXT_PUBLIC_EMAILJS_SERVICE_ID=service_gwcoxf9
-NEXT_PUBLIC_EMAILJS_TEMPLATE_ID=template_j9vol1j
-NEXT_PUBLIC_EMAILJS_PUBLIC_KEY=wlCiKA-waB_6is8oZ
+NEXT_PUBLIC_EMAILJS_SERVICE_ID=your_service_id
+NEXT_PUBLIC_EMAILJS_TEMPLATE_ID=your_template_id
+NEXT_PUBLIC_EMAILJS_PUBLIC_KEY=your_public_key
 ```
 
 ### 3. Run Development Server

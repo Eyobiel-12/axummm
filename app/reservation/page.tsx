@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { MapPin, Phone, Clock } from 'lucide-react'
 import { PageHero } from '@/components/page-hero'
 import { ReservationForm } from '@/components/reservation-form'
+import { OPENING_HOURS, formatHours } from '@/lib/hours'
 
 export const metadata: Metadata = {
   title: 'Reservations — Axum',
@@ -77,9 +78,13 @@ export default function ReservationPage() {
                   </div>
                   <div className="flex items-start gap-3">
                     <Clock className="mt-1 h-4 w-4 shrink-0 text-primary" />
-                    <div>
-                      <p>Thursday · 5:00 PM – 11:30 PM</p>
-                      <p className="text-xs">Check Google Maps for today&apos;s hours</p>
+                    <div className="w-full space-y-1">
+                      {OPENING_HOURS.map((d) => (
+                        <p key={d.name} className="flex justify-between gap-6">
+                          <span>{d.name}</span>
+                          <span className={d.open ? 'text-foreground' : ''}>{formatHours(d)}</span>
+                        </p>
+                      ))}
                     </div>
                   </div>
                 </div>

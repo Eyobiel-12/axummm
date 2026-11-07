@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { MapPin, Phone, Clock } from 'lucide-react'
+import { OPENING_HOURS, formatHours } from '@/lib/hours'
 
 function InstagramIcon({ className }: { className?: string }) {
   return (
@@ -123,9 +124,13 @@ export function SiteFooter() {
             <ul className="mt-5 space-y-4 text-sm text-muted-foreground">
               <li className="flex gap-3">
                 <Clock className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                <div className="space-y-1">
-                  <p>Thursday · 5pm – 11:30pm</p>
-                  <p>Check Google Maps for today&apos;s hours</p>
+                <div className="w-full max-w-60 space-y-1">
+                  {OPENING_HOURS.map((d) => (
+                    <p key={d.name} className="flex justify-between gap-6">
+                      <span>{d.name}</span>
+                      <span className={d.open ? 'text-foreground' : ''}>{formatHours(d)}</span>
+                    </p>
+                  ))}
                 </div>
               </li>
             </ul>
